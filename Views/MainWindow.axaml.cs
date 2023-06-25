@@ -105,31 +105,31 @@ public partial class MainWindow : Window
         }
     }
 
-    private void ZoomIn_Click(object sender, RoutedEventArgs e)
-    {
-        scale *= 1.1;
-        ApplyScaleAndTranslate(sender, e);
-    }
+    //private void ZoomIn_Click(object sender, RoutedEventArgs e)
+    //{
+    //    scale *= 1.1;
+    //    ApplyScaleAndTranslate(sender, e);
+    //}
 
-    private void ZoomOut_Click(object sender, RoutedEventArgs e)
-    {
-        scale *= 0.9;
-        ApplyScaleAndTranslate(sender, e);
-    }
+    //private void ZoomOut_Click(object sender, RoutedEventArgs e)
+    //{
+    //    scale *= 0.9;
+    //    ApplyScaleAndTranslate(sender, e);
+    //}
 
-    private void ApplyScaleAndTranslate(object sender, RoutedEventArgs e)
-    {
-        var image = (Image)sender;
+    //private void ApplyScaleAndTranslate(object sender, RoutedEventArgs e)
+    //{
 
-        var scaleTransform = FindScaleTransform(image);
-        var translateTransform = FindTranslateTransform(image);
 
-        scaleTransform.ScaleX = scale;
-        scaleTransform.ScaleY = scale;
+    //    var scaleTransform = FindScaleTransform(image);
+    //    var translateTransform = FindTranslateTransform(image);
 
-        // Применить текущие значения translateTransform.X и translateTransform.Y
+    //    scaleTransform.ScaleX = scale;
+    //    scaleTransform.ScaleY = scale;
 
-        e.Handled = true;
-    }
+    //    // Применить текущие значения translateTransform.X и translateTransform.Y
+
+    //    e.Handled = true;
+    //}
 
 }
