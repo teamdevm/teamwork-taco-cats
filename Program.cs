@@ -2,7 +2,7 @@
 using Avalonia.ReactiveUI;
 using System;
 
-namespace Documently;
+namespace Maps;
 
 class Program
 {

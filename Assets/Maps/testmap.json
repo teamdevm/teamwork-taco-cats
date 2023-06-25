@@ -1,0 +1,25 @@
+{
+  "ID": "0",
+  "Name": "Map 1",
+  "Description": "Test Map",
+  "Coordinates": [
+    [
+      58.074246,
+      54.664838
+    ],
+    [
+      57.629111,
+      54.645612
+    ],
+    [
+      57.629111,
+      55.549237
+    ],
+    [
+      58.071335,
+      55.565717
+    ]
+  ],
+  "FilePath": "maps/TestImage.png",
+  "Image": null
+}

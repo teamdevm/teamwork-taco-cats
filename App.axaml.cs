@@ -1,10 +1,11 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Documently.ViewModels;
-using Documently.Views;
+using Maps.ViewModels;
+using Maps.Views;
 
-namespace Documently;
+namespace Maps;
 
 public partial class App : Application
 {
@@ -19,8 +20,9 @@ public partial class App : Application
         {
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(),
+                DataContext = new MainWindowViewModel()
             };
+            
         }
 
         base.OnFrameworkInitializationCompleted();
