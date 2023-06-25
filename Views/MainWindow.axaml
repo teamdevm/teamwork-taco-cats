@@ -52,6 +52,11 @@
             </ScrollViewer>
         </Grid>
 
+        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10">
+            <Button Content="+" Click="ZoomIn_Click" />
+            <Button Content="-" Click="ZoomOut_Click" />
+        </StackPanel>
+
         <Grid Grid.Row="1" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
