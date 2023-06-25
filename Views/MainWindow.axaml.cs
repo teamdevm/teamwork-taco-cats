@@ -50,7 +50,7 @@ public partial class MainWindow : Window
             var offsetY = (position.Y - image.Bounds.Height / 2) * (1 - scaleChange);
 
             translateTransform.X += offsetX;
-            translateTransform.Y += offsetY;
+            translateTransform.Y += offsetY;//
         }
 
         e.Handled = true;
