@@ -9,10 +9,10 @@ namespace Maps.Models
     class Move
     {
         public string ID { get; set; }
-        public double[] Coordinates { get; set; } = new double[]
-        {
-            new double[] { 0, 0 }, // Широта и долгота
-        };
+        /// <summary>
+        /// Широта и долгота
+        /// </summary>
+        public double[] Coordinates { get; set; } = new double[] { 0, 0 }; 
         public DateTime Time { get; set; }
     }
 }
