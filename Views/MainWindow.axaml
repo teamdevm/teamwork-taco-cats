@@ -36,7 +36,7 @@
         <Grid Grid.Row="1" Grid.Column="0">
             <ScrollViewer Name="scrollViewer">
                 <Canvas Name="canvas">
-                    <Image Source="{Binding TestMap.Image}"
+                    <Image Source="{Binding TestMap.Image}" 
                            PointerWheelChanged="OnPointerWheelChanged"
                            PointerPressed="OnPointerPressed"
                            PointerReleased="OnPointerReleased"
