@@ -12,6 +12,6 @@ namespace Maps.Models
         public string ID { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        ObservableCollection<Move> CollectionOfMove = new ObservableCollection<Move>();
+        public ObservableCollection<Move> CollectionOfMove { get; set; } = new ObservableCollection<Move>();
     }
 }
