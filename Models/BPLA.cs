@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Maps.Models
 {
-    class BPLA
+    public class BPLA
     {
         public string ID { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public ObservableCollection<Move> CollectionOfMove { get; set; } = new ObservableCollection<Move>();
+        public ObservableCollection<Move> CollectionOfMove { get; set; }
     }
 }

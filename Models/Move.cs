@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Maps.Models
 {
-    class Move
+    public class Move
     {
         public string ID { get; set; }
         /// <summary>
