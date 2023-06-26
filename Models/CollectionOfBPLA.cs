@@ -10,7 +10,7 @@ namespace Maps.Models
     public class CollectionOfBPLA
     {
         ObservableCollection<BPLA> CollectionOfBPLA { get; set; } = ObservableCollection<BPLA>();
-        public void create()
+        public ObservableCollection<BPLA> Create()
         {
 
             CollectionOfBPLA.Add(new BPLA
