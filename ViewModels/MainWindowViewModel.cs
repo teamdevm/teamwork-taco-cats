@@ -46,7 +46,7 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
-    public virtual Map SelectedTestMap {get; set; }
+    //public virtual Map SelectedTestMap {get; set; }
 
 
     private ObservableCollection<Move> _collectionTestMoves;
@@ -66,9 +66,28 @@ public class MainWindowViewModel : ViewModelBase
 
     #region События
 
-    public void OnSelectedTestMapChange()
+    private int _SelectedTestMap;
+    public virtual int SelectedTestMap
+    {
+        get
+        {
+            return _SelectedTestMap;
+        }
+        set
+        {
+            _SelectedTestMap = value;
+            ChangeMap();
+            OnPropertyChanged();
+        }
+    }
+    public void OnSelectedTestMapChanged()
     {
 
+    }
+
+    private void ChangeMap()
+    {
+        TestMap = CollectionTestMaps[SelectedTestMap];
     }
 
     #endregion
@@ -82,11 +101,17 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     public INotifyTaskCompletion InitializationNotifier { get; private set; }
-
+    private CollectionOfMap _testmaps;
     private async Task InitializeAsync()
     {
         StartTestMap();
-        FillTestCollection();
+
+        _testmaps = new CollectionOfMap();
+        var temp_Maps = await  _testmaps.CreateAsync();
+        await Task.Delay(1000);
+        CollectionTestMaps = new ObservableCollection<Map>(temp_Maps);
+
+
         //_mapService = new MapService();
         //var data = await _mapService.GetMap(0);
         //await Task.Delay(1000);
@@ -103,13 +128,15 @@ public class MainWindowViewModel : ViewModelBase
         
     }
 
-    public void FillTestCollection()
+    public async Task FillTestCollection()
     {
         var maps = new CollectionOfMap();
         CollectionTestMaps = maps.Create();
         
         var move = new CollectionOfMove();
         _collectionTestMoves = move.Create();
+
+        await Task.CompletedTask;
     }
 
 

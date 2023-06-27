@@ -41,13 +41,10 @@
                         PointerReleased="OnPointerReleased"
                         PointerMoved="OnPointerMoved">
 
-					<Image x:Name="Image" Source="{Binding TestMap.Image}" >
-						
-					</Image>
 
+					<Image x:Name="Image" Source="{Binding TestMap.Image}" Stretch="Fill"/>
 
-                    <Path Name="Path" Data="{Binding ShapeGeometry}" Fill="AliceBlue" Stroke="DarkRed" StrokeThickness="2">
-                    </Path>
+                    <Path Name="Path" Data="{Binding ShapeGeometry}" Fill="AliceBlue" Stroke="DarkRed" StrokeThickness="2"/>
 
 
                     <Canvas.RenderTransform>
@@ -70,22 +67,22 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <TreeView Grid.Row="0" MinWidth="300" Margin="5"  controls:ScrollViewer.VerticalScrollBarVisibility="Auto" controls:ScrollViewer.HorizontalScrollBarVisibility="Auto">
-                <TreeViewItem Header="Root Item">
-                    <TreeViewItem Header="Child 1">
-                        <TreeViewItem Header="Grandchild 1" />
-                        <TreeViewItem Header="Grandchild 2" />
-                    </TreeViewItem>
-                    <TreeViewItem Header="Child 2">
-                        <TreeViewItem Header="Grandchild 3" />
-                        <TreeViewItem Header="Grandchild 4" />
-                    </TreeViewItem>
-                </TreeViewItem>
-            </TreeView>
+			<StackPanel Grid.Row="0" Orientation="Horizontal" >
+                <Label Content="Выбранная карта: "/>
+				<ComboBox Items="{Binding CollectionTestMaps}" SelectedIndex="{Binding SelectedTestMap}" >
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+				</ComboBox>
+            </StackPanel>
+            <ListBox Grid.Row="1"></ListBox>
 
-            <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+            <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center">
                 <Button Margin="3" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Тестовая Карта" Command="{Binding OpenTestMap}" VerticalContentAlignment="Bottom"/>
                 <Button Margin="3" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Тестовая Объект" Command="{Binding TestObjectWithMove}" VerticalContentAlignment="Bottom"/>
             </StackPanel>

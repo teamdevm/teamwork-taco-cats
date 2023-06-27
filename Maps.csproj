@@ -16,7 +16,7 @@
     <None Remove="Assets\Maps\Region0\page1.json" />
     <None Remove="Assets\Maps\Region0\testmap.json" />
     <None Remove="Assets\Maps\Region0\TestMap1.jpg" />
-    <None Remove="Assets\Maps\TestMap2.jpg" />
+    <None Remove="Assets\Maps\TestMap2.png" />
   </ItemGroup>
 
   <ItemGroup>
