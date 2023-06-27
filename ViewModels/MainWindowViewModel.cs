@@ -27,7 +27,49 @@ public class MainWindowViewModel : ViewModelBase
     //public virtual int Width { get; set; } = 1024;
     //public virtual int Height { get; set; } = 768;
     public WindowState WindwoState { get; set; } = WindowState.Maximized;
-    
+
+
+    #endregion
+
+
+    #region CollectionOfTestValue
+
+    private ObservableCollection<Map> _collectionTestMaps;
+
+    public ObservableCollection<Map> CollectionTestMaps
+    {
+        get => _collectionTestMaps;
+        set
+        {
+            _collectionTestMaps = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public virtual Map SelectedTestMap {get; set; }
+
+
+    private ObservableCollection<Move> _collectionTestMoves;
+    private ObservableCollection<BPLA> _collectionTestBPLAs;
+
+    public ObservableCollection<BPLA> CollectionTestPPLAs
+    {
+        get => _collectionTestBPLAs;
+        set
+        {
+            _collectionTestBPLAs = value;
+            OnPropertyChanged();
+        }
+    }
+
+    #endregion
+
+    #region События
+
+    public void OnSelectedTestMapChange()
+    {
+
+    }
 
     #endregion
 
@@ -44,7 +86,7 @@ public class MainWindowViewModel : ViewModelBase
     private async Task InitializeAsync()
     {
         StartTestMap();
-        
+        FillTestCollection();
         //_mapService = new MapService();
         //var data = await _mapService.GetMap(0);
         //await Task.Delay(1000);
@@ -60,6 +102,16 @@ public class MainWindowViewModel : ViewModelBase
     {
         
     }
+
+    public void FillTestCollection()
+    {
+        var maps = new CollectionOfMap();
+        CollectionTestMaps = maps.Create();
+        
+        var move = new CollectionOfMove();
+        _collectionTestMoves = move.Create();
+    }
+
 
     private void CreateVectorLayerVer1()
     {
@@ -109,8 +161,6 @@ public class MainWindowViewModel : ViewModelBase
         //// Размещение Canvas на главном окне
         //Content = canvas;
     }
-
-    
     public Avalonia.Controls.Shapes.Path PathGeometry2 { get; set; } 
     private void CreateVectorLayerVer2()
     {
@@ -316,19 +366,7 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
-    private ObservableCollection<Map> _myMaps;
-    public ObservableCollection<Map> MyMaps
-    {
-        get => _myMaps;
-        set
-        {
-            if (value != null)
-            {
-                _myMaps = value;
-                OnPropertyChanged();
-            }
-        }
-    }
+    
 }
 
 
