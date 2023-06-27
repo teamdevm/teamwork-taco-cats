@@ -195,11 +195,12 @@ public class MainWindowViewModel : ViewModelBase
     }
     private void CreateVectorLayerVer3()
     {
-        ShapeGeometry?.Figures.Clear();
 
         // Определение размеров векторного слоя
-        double canvasWidth = 800;
-        double canvasHeight = 600;
+        double canvasWidth = TestMap.Image.PixelSize.Width;
+        double canvasHeight = TestMap.Image.PixelSize.Height;
+        //double canvasWidth = 800;
+        //double canvasHeight = 600;
 
         // Определение границ географической области, в которой располагается фигура
         double minLongitude = double.MaxValue;

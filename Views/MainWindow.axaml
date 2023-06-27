@@ -35,19 +35,27 @@
 
         <Grid Grid.Row="1" Grid.Column="0">
             <ScrollViewer Name="scrollViewer">
-                <Canvas Name="canvas">
-                    <Image Source="{Binding TestMap.Image}" 
-                           PointerWheelChanged="OnPointerWheelChanged"
-                           PointerPressed="OnPointerPressed"
-                           PointerReleased="OnPointerReleased"
-                           PointerMoved="OnPointerMoved">
-                        <Image.RenderTransform>
-                            <TransformGroup>
-                                <ScaleTransform x:FieldModifier="public" ScaleX="1" ScaleY="1" />
-                                <TranslateTransform x:FieldModifier="public" X="0" Y="0" />
-                            </TransformGroup>
-                        </Image.RenderTransform>
-                    </Image>
+                <Canvas Name="canvas"
+                        PointerWheelChanged="OnPointerWheelChanged"
+                        PointerPressed="OnPointerPressed"
+                        PointerReleased="OnPointerReleased"
+                        PointerMoved="OnPointerMoved">
+
+					<Image x:Name="Image" Source="{Binding TestMap.Image}" >
+						
+					</Image>
+
+
+                    <Path Name="Path" Data="{Binding ShapeGeometry}" Fill="AliceBlue" Stroke="DarkRed" StrokeThickness="2">
+                    </Path>
+
+
+                    <Canvas.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform x:FieldModifier="public" ScaleX="1" ScaleY="1" />
+                            <TranslateTransform x:FieldModifier="public" X="0" Y="0" />
+                        </TransformGroup>
+					</Canvas.RenderTransform>
                 </Canvas>
             </ScrollViewer>
         </Grid>
@@ -57,7 +65,35 @@
             <Button Content="-" Click="ZoomOut_Click" />
         </StackPanel>-->
 
-        <Grid Grid.Row="1" Grid.Column="1">
+
+		<Grid Grid.Row="1" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TreeView Grid.Row="0" MinWidth="300" Margin="5"  controls:ScrollViewer.VerticalScrollBarVisibility="Auto" controls:ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                <TreeViewItem Header="Root Item">
+                    <TreeViewItem Header="Child 1">
+                        <TreeViewItem Header="Grandchild 1" />
+                        <TreeViewItem Header="Grandchild 2" />
+                    </TreeViewItem>
+                    <TreeViewItem Header="Child 2">
+                        <TreeViewItem Header="Grandchild 3" />
+                        <TreeViewItem Header="Grandchild 4" />
+                    </TreeViewItem>
+                </TreeViewItem>
+            </TreeView>
+
+            <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+                <Button Margin="3" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Тестовая Карта" Command="{Binding OpenTestMap}" VerticalContentAlignment="Bottom"/>
+                <Button Margin="3" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Тестовая Объект" Command="{Binding TestObjectWithMove}" VerticalContentAlignment="Bottom"/>
+            </StackPanel>
+        </Grid>
+
+        
+
+        <!--Grid Grid.Row="1" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -66,7 +102,7 @@
 
             <Button Grid.Row="0" Margin="3" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Тестовая Карта" Command="{Binding OpenTestMap}" />
             <Button Grid.Row="1" Margin="3" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Тестовая Объект" Command="{Binding TestObjectWithMove}" />
-        </Grid>
+        </Grid>-->
 	</Grid>
 
 
