@@ -31,6 +31,16 @@ public class MainWindowViewModel : ViewModelBase
 
     #endregion
 
+    private Data _data;
+    public virtual Data DataModel
+    {
+        get => _data;
+        set
+        {
+            _data = value; OnPropertyChanged();
+        }
+
+    }
 
     #region CollectionOfTestValue
 
@@ -104,14 +114,9 @@ public class MainWindowViewModel : ViewModelBase
     private CollectionOfMap _testmaps;
     private async Task InitializeAsync()
     {
-        StartTestMap();
-
-        _testmaps = new CollectionOfMap();
-        var temp_Maps = await  _testmaps.CreateAsync();
-        await Task.Delay(1000);
-        CollectionTestMaps = new ObservableCollection<Map>(temp_Maps);
-
-
+        DataModel = new Data();
+        await DataModel.FillTestDataAsync();
+        
         //_mapService = new MapService();
         //var data = await _mapService.GetMap(0);
         //await Task.Delay(1000);
@@ -120,7 +125,7 @@ public class MainWindowViewModel : ViewModelBase
 
     public void OpenTestMap()
     {
-        CreateVectorLayerVer3();
+        //CreateVectorLayerVer3();
     }
 
     public void TestObjectWithMove()

@@ -9,6 +9,7 @@ namespace Maps.Models
 {
     public class BPLA
     {
+        public bool IsSelected { get; set; } = false;
         public string ID { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
