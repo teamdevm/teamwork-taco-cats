@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -21,16 +23,15 @@ namespace Maps.Models
 
         public double[][] Coordinates { get; set; } = new double[][]
         {
-            new double[] { 0, 0 },
-            new double[] { 0, 0 },
-            new double[] { 0, 0 },
-            new double[] { 0, 0 }
+            new double[] { 0, 0 }, // Минимальная широта и долгота
+            new double[] { 0, 0 }, // Максимальная широта и долгота
         };
         public string FilePath { get; set; }
 
         [JsonIgnore]
         public Bitmap Image { get; set; }
     }
+    
 
-   
+
 }

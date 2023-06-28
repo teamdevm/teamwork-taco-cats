@@ -27,7 +27,68 @@ public class MainWindowViewModel : ViewModelBase
     //public virtual int Width { get; set; } = 1024;
     //public virtual int Height { get; set; } = 768;
     public WindowState WindwoState { get; set; } = WindowState.Maximized;
-    
+
+
+    #endregion
+
+
+    #region CollectionOfTestValue
+
+    private ObservableCollection<Map> _collectionTestMaps;
+
+    public ObservableCollection<Map> CollectionTestMaps
+    {
+        get => _collectionTestMaps;
+        set
+        {
+            _collectionTestMaps = value;
+            OnPropertyChanged();
+        }
+    }
+
+    //public virtual Map SelectedTestMap {get; set; }
+
+
+    private ObservableCollection<Move> _collectionTestMoves;
+    private ObservableCollection<BPLA> _collectionTestBPLAs;
+
+    public ObservableCollection<BPLA> CollectionTestPPLAs
+    {
+        get => _collectionTestBPLAs;
+        set
+        {
+            _collectionTestBPLAs = value;
+            OnPropertyChanged();
+        }
+    }
+
+    #endregion
+
+    #region События
+
+    private int _SelectedTestMap;
+    public virtual int SelectedTestMap
+    {
+        get
+        {
+            return _SelectedTestMap;
+        }
+        set
+        {
+            _SelectedTestMap = value;
+            ChangeMap();
+            OnPropertyChanged();
+        }
+    }
+    public void OnSelectedTestMapChanged()
+    {
+
+    }
+
+    private void ChangeMap()
+    {
+        TestMap = CollectionTestMaps[SelectedTestMap];
+    }
 
     #endregion
 
@@ -40,11 +101,17 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     public INotifyTaskCompletion InitializationNotifier { get; private set; }
-
+    private CollectionOfMap _testmaps;
     private async Task InitializeAsync()
     {
         StartTestMap();
-        
+
+        _testmaps = new CollectionOfMap();
+        var temp_Maps = await  _testmaps.CreateAsync();
+        await Task.Delay(1000);
+        CollectionTestMaps = new ObservableCollection<Map>(temp_Maps);
+
+
         //_mapService = new MapService();
         //var data = await _mapService.GetMap(0);
         //await Task.Delay(1000);
@@ -60,6 +127,18 @@ public class MainWindowViewModel : ViewModelBase
     {
         
     }
+
+    public async Task FillTestCollection()
+    {
+        var maps = new CollectionOfMap();
+        CollectionTestMaps = maps.Create();
+        
+        var move = new CollectionOfMove();
+        _collectionTestMoves = move.Create();
+
+        await Task.CompletedTask;
+    }
+
 
     private void CreateVectorLayerVer1()
     {
@@ -109,8 +188,6 @@ public class MainWindowViewModel : ViewModelBase
         //// Размещение Canvas на главном окне
         //Content = canvas;
     }
-
-    
     public Avalonia.Controls.Shapes.Path PathGeometry2 { get; set; } 
     private void CreateVectorLayerVer2()
     {
@@ -195,11 +272,12 @@ public class MainWindowViewModel : ViewModelBase
     }
     private void CreateVectorLayerVer3()
     {
-        ShapeGeometry?.Figures.Clear();
 
         // Определение размеров векторного слоя
-        double canvasWidth = 800;
-        double canvasHeight = 600;
+        double canvasWidth = TestMap.Image.PixelSize.Width;
+        double canvasHeight = TestMap.Image.PixelSize.Height;
+        //double canvasWidth = 800;
+        //double canvasHeight = 600;
 
         // Определение границ географической области, в которой располагается фигура
         double minLongitude = double.MaxValue;
@@ -315,19 +393,7 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
-    private ObservableCollection<Map> _myMaps;
-    public ObservableCollection<Map> MyMaps
-    {
-        get => _myMaps;
-        set
-        {
-            if (value != null)
-            {
-                _myMaps = value;
-                OnPropertyChanged();
-            }
-        }
-    }
+    
 }
 
 
