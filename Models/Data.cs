@@ -25,7 +25,7 @@ namespace Maps.Models
         }
         #region Collection
 
-        private ObservableCollection<Map> _maps;
+        private ObservableCollection<Map> _maps = new ObservableCollection<Map>();
 
         public virtual ObservableCollection<Map> Maps
         {
@@ -36,10 +36,11 @@ namespace Maps.Models
                 OnPropertyChanged();
             }
         }
-        public virtual ObservableCollection<Move> Moves { get; set; }
+
+        public virtual ObservableCollection<Move> Moves { get; set; } = new ObservableCollection<Move>();
 
 
-        private ObservableCollection<BPLA> _bpla;
+        private ObservableCollection<BPLA> _bpla = new ObservableCollection<BPLA>();
 
         public virtual ObservableCollection<BPLA> BPLAs
         {
