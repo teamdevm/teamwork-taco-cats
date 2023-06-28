@@ -42,66 +42,17 @@ public class MainWindowViewModel : ViewModelBase
 
     }
 
-    #region CollectionOfTestValue
+    private PathGeometry _shapeGeometry = new PathGeometry();
 
-    private ObservableCollection<Map> _collectionTestMaps;
-
-    public ObservableCollection<Map> CollectionTestMaps
+    public PathGeometry ShapeGeometry
     {
-        get => _collectionTestMaps;
+        get { return _shapeGeometry; }
         set
         {
-            _collectionTestMaps = value;
-            OnPropertyChanged();
+            _shapeGeometry = value;
+            OnPropertyChanged(nameof(ShapeGeometry));
         }
     }
-
-    //public virtual Map SelectedTestMap {get; set; }
-
-
-    private ObservableCollection<Move> _collectionTestMoves;
-    private ObservableCollection<BPLA> _collectionTestBPLAs;
-
-    public ObservableCollection<BPLA> CollectionTestPPLAs
-    {
-        get => _collectionTestBPLAs;
-        set
-        {
-            _collectionTestBPLAs = value;
-            OnPropertyChanged();
-        }
-    }
-
-    #endregion
-
-    #region События
-
-    private int _SelectedTestMap;
-    public virtual int SelectedTestMap
-    {
-        get
-        {
-            return _SelectedTestMap;
-        }
-        set
-        {
-            _SelectedTestMap = value;
-            ChangeMap();
-            OnPropertyChanged();
-        }
-    }
-    public void OnSelectedTestMapChanged()
-    {
-
-    }
-
-    private void ChangeMap()
-    {
-        TestMap = CollectionTestMaps[SelectedTestMap];
-    }
-
-    #endregion
-
 
     private MapService _mapService;
 
@@ -123,6 +74,9 @@ public class MainWindowViewModel : ViewModelBase
         //MyMaps = new ObservableCollection<Map>(data);
     }
 
+
+    #region Buttons
+
     public void OpenTestMap()
     {
         //CreateVectorLayerVer3();
@@ -130,20 +84,14 @@ public class MainWindowViewModel : ViewModelBase
 
     public void TestObjectWithMove()
     {
-        
+
     }
 
-    public async Task FillTestCollection()
-    {
-        var maps = new CollectionOfMap();
-        CollectionTestMaps = maps.Create();
-        
-        var move = new CollectionOfMove();
-        _collectionTestMoves = move.Create();
 
-        await Task.CompletedTask;
-    }
+    #endregion
 
+
+    #region Methods
 
     private void CreateVectorLayerVer1()
     {
@@ -193,7 +141,6 @@ public class MainWindowViewModel : ViewModelBase
         //// Размещение Canvas на главном окне
         //Content = canvas;
     }
-    public Avalonia.Controls.Shapes.Path PathGeometry2 { get; set; } 
     private void CreateVectorLayerVer2()
     {
         // Создание объекта Canvas для размещения векторного слоя
@@ -277,10 +224,12 @@ public class MainWindowViewModel : ViewModelBase
     }
     private void CreateVectorLayerVer3()
     {
+        if (DataModel == null)
+            return;
 
         // Определение размеров векторного слоя
-        double canvasWidth = TestMap.Image.PixelSize.Width;
-        double canvasHeight = TestMap.Image.PixelSize.Height;
+        double canvasWidth = DataModel.SelectedMap.Image.PixelSize.Width;
+        double canvasHeight = DataModel.SelectedMap.Image.PixelSize.Height;
         //double canvasWidth = 800;
         //double canvasHeight = 600;
 
@@ -312,7 +261,7 @@ public class MainWindowViewModel : ViewModelBase
         double scaleY = canvasHeight / (maxLatitude - minLatitude);
         double offsetX = -minLongitude * scaleX;
         double offsetY = -minLatitude * scaleY;
-        
+
 
         // Создание объекта PathFigure для представления фигуры
         Avalonia.Media.PathFigure pathFigure = new Avalonia.Media.PathFigure();
@@ -341,62 +290,14 @@ public class MainWindowViewModel : ViewModelBase
 
         // Замыкание фигуры путем добавления последнего линейного сегмента к первой точке
         pathFigure.IsClosed = true;
-        
+
 
         ShapeGeometry.Figures.Add(pathFigure);
     }
 
+    #endregion
 
-    private PathGeometry _shapeGeometry = new PathGeometry();
 
-    public PathGeometry ShapeGeometry
-    {
-        get { return _shapeGeometry; }
-        set
-        {
-            _shapeGeometry = value;
-            OnPropertyChanged(nameof(ShapeGeometry));
-        }
-    }
-    
-    public void StartTestMap()
-    {
-        //string _workingDirectory = Environment.CurrentDirectory;
-        string _workingDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
-        var folderPath = $"{_workingDirectory}\\Assets\\Maps";
-        //C:\Users\NixAt\source\repos\NixAtis\Maps\Assets\Maps\TestImage.png
-        using var fileStream = new FileStream(Path.Combine(folderPath, "TestImage.png"), FileMode.Open, FileAccess.Read) { Position = 0 };
-        var bitmap = new Bitmap(fileStream);
-
-        TestMap = new Map
-        {
-            ID = "0",
-            Name = "Test Map",
-            Description = "Test Map",
-            Coordinates = new double[][] {
-                new double[] { 58.074246, 54.664838 },
-                new double[] { 57.629111, 54.645612 },
-                new double[] { 57.629111, 55.549237 },
-                new double[] { 58.071335, 55.565717 }
-            },
-            FilePath = Path.Combine(folderPath, "TestImage.png"),
-            Image = bitmap
-        };
-    }
-
-    private Map _testMap;
-    public virtual Map TestMap
-    {
-        get => _testMap;
-        set
-        {
-            if (value != null)
-            {
-                _testMap = value;
-                OnPropertyChanged();
-            }
-        }
-    }
 
     
 }

@@ -71,7 +71,7 @@
 
 			<StackPanel Grid.Row="0" Orientation="Horizontal" >
                 <Label Content="Выбранная карта: "/>
-				<ComboBox Items="{Binding DataModel.Maps}" SelectedIndex="{Binding DataModel.SelectedIndexMap, Mode=TwoWay}" >
+				<ComboBox Items="{Binding DataModel.Maps}" SelectedIndex="{Binding DataModel.SelectedIndexMap, Mode=TwoWay}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Name}" />

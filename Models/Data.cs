@@ -94,7 +94,7 @@ namespace Maps.Models
         {
             var maps = new CollectionOfMap();
             Maps = new ObservableCollection<Map>(await maps.CreateAsync());
-            ChangeSelectedMap();
+            SelectedIndexMap = 0;
 
             var move = new CollectionOfMove();
             Moves = move.Create();
