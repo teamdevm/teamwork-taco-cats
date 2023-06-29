@@ -18,6 +18,9 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using Maps.Views;
 using DynamicData;
+using ReactiveUI;
+using System.Reactive;
+using System.ComponentModel;
 
 namespace Maps.ViewModels;
 
@@ -31,86 +34,55 @@ public class MainWindowViewModel : ViewModelBase
 
     #endregion
 
-
-    #region CollectionOfTestValue
-
-    private ObservableCollection<Map> _collectionTestMaps;
-
-    public ObservableCollection<Map> CollectionTestMaps
+    private Data _data;
+    public virtual Data DataModel
     {
-        get => _collectionTestMaps;
+        get => _data;
         set
         {
-            _collectionTestMaps = value;
-            OnPropertyChanged();
+            _data = value; OnPropertyChanged();
         }
+
     }
 
-    //public virtual Map SelectedTestMap {get; set; }
+    private PathGeometry _shapeGeometry = new PathGeometry();
 
-
-    private ObservableCollection<Move> _collectionTestMoves;
-    private ObservableCollection<BPLA> _collectionTestBPLAs;
-
-    public ObservableCollection<BPLA> CollectionTestPPLAs
+    public PathGeometry ShapeGeometry
     {
-        get => _collectionTestBPLAs;
+        get { return _shapeGeometry; }
         set
         {
-            _collectionTestBPLAs = value;
-            OnPropertyChanged();
+            _shapeGeometry = value;
+            OnPropertyChanged(nameof(ShapeGeometry));
         }
     }
-
-    #endregion
-
-    #region События
-
-    private int _SelectedTestMap;
-    public virtual int SelectedTestMap
-    {
-        get
-        {
-            return _SelectedTestMap;
-        }
-        set
-        {
-            _SelectedTestMap = value;
-            ChangeMap();
-            OnPropertyChanged();
-        }
-    }
-    public void OnSelectedTestMapChanged()
-    {
-
-    }
-
-    private void ChangeMap()
-    {
-        TestMap = CollectionTestMaps[SelectedTestMap];
-    }
-
-    #endregion
-
 
     private MapService _mapService;
+    public INotifyTaskCompletion InitializationNotifier { get; private set; }
+
+
+
+
+
+
 
     public MainWindowViewModel()
     {
         InitializationNotifier = NotifyTaskCompletion.Create(InitializeAsync());
     }
 
-    public INotifyTaskCompletion InitializationNotifier { get; private set; }
-    private CollectionOfMap _testmaps;
+
     private async Task InitializeAsync()
     {
-        StartTestMap();
+        DataModel = new Data();
+        await DataModel.FillTestDataAsync();
 
-        _testmaps = new CollectionOfMap();
-        var temp_Maps = await  _testmaps.CreateAsync();
-        await Task.Delay(1000);
-        CollectionTestMaps = new ObservableCollection<Map>(temp_Maps);
+        foreach (var item in DataModel.BPLAs)
+        {
+            item.PropertyChanged += BPLA_PropertyChanged;
+        }
 
+        DataModel.PropertyChanged += Index_PropertyChanged;
 
         //_mapService = new MapService();
         //var data = await _mapService.GetMap(0);
@@ -118,27 +90,24 @@ public class MainWindowViewModel : ViewModelBase
         //MyMaps = new ObservableCollection<Map>(data);
     }
 
+
+    #region Buttons
+
     public void OpenTestMap()
     {
-        CreateVectorLayerVer3();
+        //CreateVectorLayerVer3();
     }
 
     public void TestObjectWithMove()
     {
-        
+
     }
 
-    public async Task FillTestCollection()
-    {
-        var maps = new CollectionOfMap();
-        CollectionTestMaps = maps.Create();
-        
-        var move = new CollectionOfMove();
-        _collectionTestMoves = move.Create();
 
-        await Task.CompletedTask;
-    }
+    #endregion
 
+
+    #region Methods
 
     private void CreateVectorLayerVer1()
     {
@@ -188,7 +157,6 @@ public class MainWindowViewModel : ViewModelBase
         //// Размещение Canvas на главном окне
         //Content = canvas;
     }
-    public Avalonia.Controls.Shapes.Path PathGeometry2 { get; set; } 
     private void CreateVectorLayerVer2()
     {
         // Создание объекта Canvas для размещения векторного слоя
@@ -272,10 +240,12 @@ public class MainWindowViewModel : ViewModelBase
     }
     private void CreateVectorLayerVer3()
     {
+        if (DataModel == null)
+            return;
 
         // Определение размеров векторного слоя
-        double canvasWidth = TestMap.Image.PixelSize.Width;
-        double canvasHeight = TestMap.Image.PixelSize.Height;
+        double canvasWidth = DataModel.SelectedMap.Image.PixelSize.Width;
+        double canvasHeight = DataModel.SelectedMap.Image.PixelSize.Height;
         //double canvasWidth = 800;
         //double canvasHeight = 600;
 
@@ -286,6 +256,9 @@ public class MainWindowViewModel : ViewModelBase
         double maxLatitude = double.MinValue;
 
         // Задание координат широты и долготы для 4 точек
+
+
+
         double[] latitudes = { 58.074246, 57.629111, 57.629111, 58.071335 };
         double[] longitudes = { 54.664838, 54.645612, 55.549237, 55.565717 };
 
@@ -307,17 +280,17 @@ public class MainWindowViewModel : ViewModelBase
         double scaleY = canvasHeight / (maxLatitude - minLatitude);
         double offsetX = -minLongitude * scaleX;
         double offsetY = -minLatitude * scaleY;
-        
+
 
         // Создание объекта PathFigure для представления фигуры
         Avalonia.Media.PathFigure pathFigure = new Avalonia.Media.PathFigure();
 
         // Добавление сегментов в PathFigure, указывая пиксельные координаты для каждой точки фигуры
-        for (int i = 0; i < latitudes.Length; i++)
+        for (int i = 1; i < latitudes.Length-1; i++)
         {
             double x = (longitudes[i] * scaleX) + offsetX;
             double y = (latitudes[i] * scaleY) + offsetY;
-            if (i == 0)
+            if (i == 1)
             {
                 // Установка начальной точки фигуры в пиксельных координатах
                 pathFigure.StartPoint = new Avalonia.Point(x, y);
@@ -336,64 +309,195 @@ public class MainWindowViewModel : ViewModelBase
 
         // Замыкание фигуры путем добавления последнего линейного сегмента к первой точке
         pathFigure.IsClosed = true;
-        
+
+
+        ShapeGeometry.Figures.Add(pathFigure);
+    }
+    private void CreateVectorLayerVer4()
+    {
+        if (DataModel == null)
+            return;
+
+        // Определение размеров векторного слоя
+        double canvasWidth = DataModel.SelectedMap.Image.PixelSize.Width;
+        double canvasHeight = DataModel.SelectedMap.Image.PixelSize.Height;
+        //double canvasWidth = 800;
+        //double canvasHeight = 600;
+
+        // Определение границ географической области, в которой располагается фигура
+        double minLongitude = double.MaxValue;
+        double maxLongitude = double.MinValue;
+        double minLatitude = double.MaxValue;
+        double maxLatitude = double.MinValue;
+
+        // Задание координат широты и долготы для 4 точек
+
+
+
+        double[] latitudes = { 58.074246, 57.629111, 57.629111, 58.071335 };
+        double[] longitudes = { 54.664838, 54.645612, 55.549237, 55.565717 };
+
+        // Нахождение минимальных и максимальных значений широты и долготы
+        for (int i = 0; i < latitudes.Length; i++)
+        {
+            if (longitudes[i] < minLongitude)
+                minLongitude = longitudes[i];
+            if (longitudes[i] > maxLongitude)
+                maxLongitude = longitudes[i];
+            if (latitudes[i] < minLatitude)
+                minLatitude = latitudes[i];
+            if (latitudes[i] > maxLatitude)
+                maxLatitude = latitudes[i];
+        }
+
+        // Вычисление масштабирования и смещения
+        double scaleX = canvasWidth / (maxLongitude - minLongitude);
+        double scaleY = canvasHeight / (maxLatitude - minLatitude);
+        double offsetX = -minLongitude * scaleX;
+        double offsetY = -minLatitude * scaleY;
+
+
+        // Создание объекта PathFigure для представления фигуры
+        Avalonia.Media.PathFigure pathFigure = new Avalonia.Media.PathFigure();
+
+        // Добавление сегментов в PathFigure, указывая пиксельные координаты для каждой точки фигуры
+        for (int i = 1; i < latitudes.Length - 2; i++)
+        {
+            double x = (longitudes[i] * scaleX) + offsetX;
+            double y = (latitudes[i] * scaleY) + offsetY;
+            if (i == 1)
+            {
+                // Установка начальной точки фигуры в пиксельных координатах
+                pathFigure.StartPoint = new Avalonia.Point(x, y);
+            }
+            else
+            {
+                // Добавление линейного сегмента к предыдущей точке фигуры
+                //pathFigure.Segments.Add(new Avalonia.Media.LineSegment(new Point(x, y), true));
+                Avalonia.Point point = new Point(x, y);
+                Avalonia.Media.LineSegment lineSegment = new LineSegment();
+                lineSegment.Point = point;
+
+                pathFigure.Segments.Add(lineSegment);
+            }
+        }
+
+        // Замыкание фигуры путем добавления последнего линейного сегмента к первой точке
+        pathFigure.IsClosed = true;
+
 
         ShapeGeometry.Figures.Add(pathFigure);
     }
 
-
-    private PathGeometry _shapeGeometry = new PathGeometry();
-
-    public PathGeometry ShapeGeometry
+    private void CreateVectorLayerVer5()
     {
-        get { return _shapeGeometry; }
+
+        // Создание объекта PathFigure для представления фигуры
+        Avalonia.Media.PathFigure pathFigure = new Avalonia.Media.PathFigure();
+
+        pathFigure.StartPoint = new Avalonia.Point(0 + 75, 0 + 320);
+
+        Avalonia.Point point = new Point(DataModel.SelectedMap.Image.PixelSize.Width - 95,DataModel.SelectedMap.Image.PixelSize.Height - 350 );
+        Avalonia.Media.LineSegment lineSegment = new LineSegment();
+        lineSegment.Point = point;
+
+        pathFigure.Segments.Add(lineSegment);
+
+        
+
+        // Замыкание фигуры путем добавления последнего линейного сегмента к первой точке
+        pathFigure.IsClosed = true;
+
+        if (ShapeGeometry.Figures.Count == 0) ShapeGeometry.Figures.Add(pathFigure);
+        ShapeGeometry.Figures[0] = (pathFigure);
+    }
+
+    private void CreateVectorLayerVer6()
+    {
+
+        // Создание объекта PathFigure для представления фигуры
+        Avalonia.Media.PathFigure pathFigure = new Avalonia.Media.PathFigure();
+
+        pathFigure.StartPoint = new Avalonia.Point(0 + 75, 0 + 320);
+
+        Avalonia.Point point = new Point(DataModel.SelectedMap.Image.PixelSize.Width - 95, DataModel.SelectedMap.Image.PixelSize.Height - 350);
+        Avalonia.Media.LineSegment lineSegment = new LineSegment();
+        lineSegment.Point = point;
+
+        pathFigure.Segments.Add(lineSegment);
+
+
+
+        // Замыкание фигуры путем добавления последнего линейного сегмента к первой точке
+        pathFigure.IsClosed = true;
+
+        if (ShapeGeometry.Figures.Count == 0) ShapeGeometry.Figures.Add(pathFigure);
+        ShapeGeometry.Figures[0] = (pathFigure);
+    }
+    #endregion
+
+
+    #region Testing
+
+    private ObservableCollection<PathGeometry> pathGeometries = new ObservableCollection<PathGeometry>();
+
+    public ObservableCollection<PathGeometry> PathGeometries
+    {
+        get { return pathGeometries; }
         set
         {
-            _shapeGeometry = value;
-            OnPropertyChanged(nameof(ShapeGeometry));
+            pathGeometries = value;
+            OnPropertyChanged(nameof(PathGeometries));
         }
     }
-    
-    public void StartTestMap()
-    {
-        //string _workingDirectory = Environment.CurrentDirectory;
-        string _workingDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
-        var folderPath = $"{_workingDirectory}\\Assets\\Maps";
-        //C:\Users\NixAt\source\repos\NixAtis\Maps\Assets\Maps\TestImage.png
-        using var fileStream = new FileStream(Path.Combine(folderPath, "TestImage.png"), FileMode.Open, FileAccess.Read) { Position = 0 };
-        var bitmap = new Bitmap(fileStream);
 
-        TestMap = new Map
-        {
-            ID = "0",
-            Name = "Test Map",
-            Description = "Test Map",
-            Coordinates = new double[][] {
-                new double[] { 58.074246, 54.664838 },
-                new double[] { 57.629111, 54.645612 },
-                new double[] { 57.629111, 55.549237 },
-                new double[] { 58.071335, 55.565717 }
-            },
-            FilePath = Path.Combine(folderPath, "TestImage.png"),
-            Image = bitmap
-        };
+    // Реализация INotifyPropertyChanged
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected virtual void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    private Map _testMap;
-    public virtual Map TestMap
+    private void BPLA_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
-        get => _testMap;
-        set
+        if (e.PropertyName == nameof(BPLA.IsSelected))
         {
-            if (value != null)
+            var bpla = sender as BPLA;
+
+            var shape = DataModel.ShapeCollections.FirstOrDefault(o => o.ID == bpla.ID);
+            
+            if (shape != null)
+                shape.IsSelected = bpla.IsSelected;
+
+            if (!bpla.IsSelected)
             {
-                _testMap = value;
-                OnPropertyChanged();
+                if (ShapeGeometry.Figures.Count == 0) ShapeGeometry.Figures.Add(new PathFigure());
+                ShapeGeometry.Figures[0] = new PathFigure();
             }
+            
+
+            if (bpla.ID == "1" && DataModel.SelectedIndexMap == 1 && bpla.IsSelected)
+                CreateVectorLayerVer5();
+            else if (bpla.ID == "2" && DataModel.SelectedIndexMap == 2 && bpla.IsSelected)
+                CreateVectorLayerVer6();
         }
     }
+    private void Index_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(DataModel.SelectedMap))
+        {
+            foreach (var bpla in DataModel.BPLAs)
+            {
+                bpla.IsSelected = false;
+            }
 
-    
+            if (ShapeGeometry.Figures.Count == 0) ShapeGeometry.Figures.Add(new PathFigure());
+            ShapeGeometry.Figures[0] = new PathFigure();
+        }
+    }
+    #endregion
+
 }
 
 

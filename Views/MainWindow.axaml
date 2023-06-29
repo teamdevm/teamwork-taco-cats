@@ -17,6 +17,7 @@
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -28,11 +29,13 @@
         </Grid.RowDefinitions>
 
         <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
-            <MenuItem Header="Файл"/>
-            <MenuItem Header="Экспорт"/>
+            <MenuItem Header="Файл">
+                <MenuItem Header="Экспорт данных"/>
+                <MenuItem Header="Импорт карты"/>
+            </MenuItem>
+            
         </Menu>
-
-
+        
         <Grid Grid.Row="1" Grid.Column="1">
             <ScrollViewer Name="scrollViewer">
                 <Canvas Name="canvas"
@@ -42,10 +45,32 @@
                         PointerMoved="OnPointerMoved">
 
 
-					<Image x:Name="Image" Source="{Binding TestMap.Image}" Stretch="Fill"/>
+					<Image x:Name="Image" Source="{Binding DataModel.SelectedMap.Image}" Stretch="Fill"/>
 
-                    <Path Name="Path" Data="{Binding ShapeGeometry}" Fill="AliceBlue" Stroke="DarkRed" StrokeThickness="2"/>
+                    <!--<Path Name="Path" Data="{Binding ShapeGeometry}" Fill="AliceBlue" Stroke="DarkRed" StrokeThickness="2"/>-->
+                    <Path Name="Path" Data="{Binding ShapeGeometry}" Stroke="DarkRed" StrokeThickness="2"/>
 
+                    <!--<ListBox Items="{Binding DataModel.ShapeCollections}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                --><!-- Вывод ID и фигур --><!--
+                                <StackPanel>
+                                    <TextBlock Text="{Binding ID}" FontWeight="Bold" />
+                                    <ItemsControl Items="{Binding Figures}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                --><!-- Вывод фигуры --><!--
+                                                <StackPanel>
+                                                    <Path Data="{Binding}" Stroke="Black" StrokeThickness="1" Fill="LightGray"
+                                                          IsVisible="{Binding IsSelected}}" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>-->
 
                     <Canvas.RenderTransform>
                         <TransformGroup>
@@ -65,111 +90,62 @@
 
 		<Grid Grid.Row="1" Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-			<StackPanel Grid.Row="0" Orientation="Horizontal" >
-                <Label Content="Выбранная карта: "/>
-				<ComboBox Items="{Binding CollectionTestMaps}" SelectedIndex="{Binding SelectedTestMap}" >
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Name}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-				</ComboBox>
-            </StackPanel>
-            <ListBox Grid.Row="1"></ListBox>
+			<Border Grid.Row="0" VerticalAlignment="Top"
+                    BorderBrush="DarkGray"
+                    BorderThickness="2"
+                    CornerRadius="3"
+                    Padding="4"
+                    Margin="5">
+                <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Top">
+                    <Label Content="Выбранная карта:" Margin="5"/>
+                    <ComboBox Items="{Binding DataModel.Maps}" SelectedIndex="{Binding DataModel.SelectedIndexMap, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+			</Border>
 
-            <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+
+			<Border Grid.Row="1"  VerticalAlignment="Top"
+                    BorderBrush="DarkGray"
+                    BorderThickness="2"
+                    CornerRadius="3"
+                    Padding="4"
+                    Margin="5">
+                
+                <DataGrid Items="{Binding DataModel.BPLAs}" 
+                          AutoGenerateColumns="False" 
+                          GridLinesVisibility="All" >
+                    <DataGrid.Columns>
+                        <DataGridCheckBoxColumn Header="Выбран" Binding="{Binding IsSelected, Mode=TwoWay}" />
+                        <DataGridTextColumn Header="ID" IsReadOnly="True" Binding="{Binding ID, Mode=OneWay}"/>
+                        <DataGridTextColumn Header="Название" IsReadOnly="True" Binding="{Binding Name, Mode=OneWay}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+			</Border>
+
+
+
+
+            <TextBlock Grid.Row="3" x:Name="PositionTextBlock" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                       <!--<StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center">
                 <Button Margin="3" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Тестовая Карта" Command="{Binding OpenTestMap}" VerticalContentAlignment="Bottom"/>
                 <Button Margin="3" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Тестовая Объект" Command="{Binding TestObjectWithMove}" VerticalContentAlignment="Bottom"/>
-            </StackPanel>
+            </StackPanel>-->
         </Grid>
 
-        
-
-        <!--Grid Grid.Row="1" Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-
-
-            <Button Grid.Row="0" Margin="3" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Тестовая Карта" Command="{Binding OpenTestMap}" />
-            <Button Grid.Row="1" Margin="3" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Тестовая Объект" Command="{Binding TestObjectWithMove}" />
-        </Grid>-->
 	</Grid>
 
 
 
-	<!--<Grid>
-        <ScrollViewer Name="scrollViewer">
-            <Grid>
-                <controls:Image Source="{Binding TestMap.Image}"
-                                PointerWheelChanged="OnPointerWheelChanged"
-                                PointerPressed="OnPointerPressed"
-                                PointerReleased="OnPointerReleased"
-                                PointerMoved="OnPointerMoved"
-                                RenderTransformOrigin="0.5,0.5">
-                    <controls:Image.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform x:Name="scaleTransform" ScaleX="1" ScaleY="1" />
-                            <TranslateTransform x:Name="translateTransform" X="0" Y="0" />
-                        </TransformGroup>
-                    </controls:Image.RenderTransform>
-                </controls:Image>
-            </Grid>
-        </ScrollViewer>
-	</Grid>-->
 	
-	<!--<Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
-		</Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
-
-        <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
-            <MenuItem Header="Файл"/>
-            <MenuItem Header="Экспорт"/>
-        </Menu>
-
-		--><!--<Canvas Margin="5" Grid.Row="1" Grid.Column="0" Width="{Binding TestMap.Image.PixelSize.Width}" >
-            <Viewbox Margin="5" Stretch="Uniform">
-                <Image Grid.Row="1" Grid.Column="0"   Source="{Binding TestMap.Image}" />
-			</Viewbox>
-
-			<Path Margin="5"  Stroke="DarkRed" StrokeThickness="5" Data="{Binding ShapeGeometry}"></Path>
-		</Canvas>--><!--
-
-        <Canvas Margin="5" Grid.Row="1" Grid.Column="0">
-            <Viewbox Margin="5" Stretch="Uniform">
-                <Image Source="{Binding TestMap.Image}"
-                       Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=Width}"
-                       Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=Height}" />
-            </Viewbox>
-
-            <Path Margin="5" Stroke="DarkRed" StrokeThickness="5" Data="{Binding ShapeGeometry}" />
-        </Canvas>
- 
-        <Grid Grid.Row="1" Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-
-            
-            <Button Grid.Row="0" Margin="3" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Тестовая Карта" Command="{Binding OpenTestMap}" />
-            <Button Grid.Row="1" Margin="3" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Тестовая Объект" Command="{Binding TestObjectWithMove}" />
-		</Grid>
-    </Grid>-->
-	
-    
-
 </Window>
