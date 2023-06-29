@@ -80,7 +80,7 @@ namespace Maps.Models
                 _SelectedIndexMap = value;
                 ChangeSelectedMap();
                 CreateShapeCollections();
-                OnPropertyChanged();
+                OnPropertyChanged(nameof(SelectedIndexMap));
             }
         }
 

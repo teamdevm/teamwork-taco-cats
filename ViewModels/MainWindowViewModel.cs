@@ -82,6 +82,8 @@ public class MainWindowViewModel : ViewModelBase
             item.PropertyChanged += BPLA_PropertyChanged;
         }
 
+        DataModel.PropertyChanged += Index_PropertyChanged;
+
         //_mapService = new MapService();
         //var data = await _mapService.GetMap(0);
         //await Task.Delay(1000);
@@ -468,16 +470,35 @@ public class MainWindowViewModel : ViewModelBase
             if (shape != null)
                 shape.IsSelected = bpla.IsSelected;
 
-            if (bpla.ID == "1")
+            if (!bpla.IsSelected)
+            {
+                if (ShapeGeometry.Figures.Count == 0) ShapeGeometry.Figures.Add(new PathFigure());
+                ShapeGeometry.Figures[0] = new PathFigure();
+            }
+            
+
+            if (bpla.ID == "1" && DataModel.SelectedIndexMap == 1 && bpla.IsSelected)
                 CreateVectorLayerVer5();
-            else if (bpla.ID == "2")
+            else if (bpla.ID == "2" && DataModel.SelectedIndexMap == 2 && bpla.IsSelected)
                 CreateVectorLayerVer6();
         }
     }
+    private void Index_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(DataModel.SelectedMap))
+        {
+            foreach (var bpla in DataModel.BPLAs)
+            {
+                bpla.IsSelected = false;
+            }
 
+            if (ShapeGeometry.Figures.Count == 0) ShapeGeometry.Figures.Add(new PathFigure());
+            ShapeGeometry.Figures[0] = new PathFigure();
+        }
+    }
     #endregion
 
-    }
+}
 
 
 
