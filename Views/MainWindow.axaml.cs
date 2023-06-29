@@ -7,6 +7,8 @@ using Avalonia.Media;
 using System.Linq;
 using Avalonia.Controls.Shapes;
 using Maps.ViewModels;
+using Microsoft.Win32.SafeHandles;
+using System.Threading;
 
 namespace Maps.Views;
 
@@ -23,6 +25,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         AttachTransforms();
+        AttachMouseMoveEvent();
     }
 
     private void AttachTransforms()
@@ -244,6 +247,33 @@ public partial class MainWindow : Window
 
     private void OnPointerMoved(object sender, PointerEventArgs e)
     {
+        MousePosition = e.GetPosition(this);
+
+       
+        // Рассчитываем коэффициенты масштабирования
+        double scaleX = 360.0 / (DataContext as MainWindowViewModel).DataModel.SelectedMap.Image.PixelSize.Width;
+        double scaleY = 180.0 / (DataContext as MainWindowViewModel).DataModel.SelectedMap.Image.PixelSize.Height;
+
+        // Вычисляем относительные координаты
+        double relX = MousePosition.X / (DataContext as MainWindowViewModel).DataModel.SelectedMap.Image.PixelSize.Width;
+        double relY = MousePosition.Y / (DataContext as MainWindowViewModel).DataModel.SelectedMap.Image.PixelSize.Height;
+
+        // Вычисляем широту и долготу
+        double lat = (DataContext as MainWindowViewModel).DataModel.SelectedMap.Coordinates[0][0] + (relY - 0.5) * (-2 * scaleY);
+        double lon = (DataContext as MainWindowViewModel).DataModel.SelectedMap.Coordinates[0][1] + (relX - 0.5) * (2 * scaleX);
+
+       
+
+
+        //PositionTextBlock.Text = $"X: {MousePosition.X}, Y: {MousePosition.Y}";
+        PositionTextBlock.Text = $"Ш: {Math.Round(lat,5)}, Д: {Math.Round(lon,5)}";
+
+
+        var positionMouse= e.GetPosition(this);
+        _positionTextBlock.Text = $"X: {positionMouse.X}, Y: {positionMouse.Y}";
+        
+        
+
         if (lastMousePosition.HasValue && isLeftMouseButtonPressed)
         {
             
@@ -259,8 +289,15 @@ public partial class MainWindow : Window
             lastMousePosition = position;
         }
     }
+    private void AttachMouseMoveEvent()
+    {
+        this.PointerMoved += OnPointerMoved;
+    }
+    public TextBlock _positionTextBlock = new TextBlock();
 
-    
+
+    public Point MousePosition { get; set; }
+
 
     //private void OnPointerMoved(object sender, PointerEventArgs e)
     //{
