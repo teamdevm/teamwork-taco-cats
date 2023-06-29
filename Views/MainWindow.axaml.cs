@@ -1,3 +1,4 @@
+using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -258,6 +259,8 @@ public partial class MainWindow : Window
             lastMousePosition = position;
         }
     }
+
+    
 
     //private void OnPointerMoved(object sender, PointerEventArgs e)
     //{
