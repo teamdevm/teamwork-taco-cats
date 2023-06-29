@@ -39,5 +39,6 @@
 
   <ItemGroup>
     <Folder Include="Assets\Maps\Region0\" />
+    <Folder Include="Documentation\" />
   </ItemGroup>
 </Project>
