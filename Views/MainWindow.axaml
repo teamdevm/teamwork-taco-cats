@@ -136,7 +136,13 @@
 
 
 
-            <TextBlock Grid.Row="3" x:Name="PositionTextBlock" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+            <Border Grid.Row="3">
+                <StackPanel Orientation="Vertical">
+                    <Label Content="Координаты" Margin="5"/>
+
+                    <TextBlock Grid.Row="3" x:Name="PositionTextBlock" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+				</StackPanel>
+            </Border>
                        <!--<StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center">
                 <Button Margin="3" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Тестовая Карта" Command="{Binding OpenTestMap}" VerticalContentAlignment="Bottom"/>
                 <Button Margin="3" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Тестовая Объект" Command="{Binding TestObjectWithMove}" VerticalContentAlignment="Bottom"/>
